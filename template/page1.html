@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Welcome Page</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'page1.css' %}">
+</head>
+<body>
+	<h2>Welcome</h2>
+	<h2>Please Enter your Details</h2>
+	<form method="GET" action="quote">
+		<h3>Name: <input type="text" name="name"></h3>
+		<h3>City: <input type="text" name="city"></h3>
+		<input type="submit" name="submit">
+	</form>
+</body>
+</html>

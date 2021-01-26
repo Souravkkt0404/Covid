@@ -1,0 +1,3 @@
+imput[type=text]{
+	
+}

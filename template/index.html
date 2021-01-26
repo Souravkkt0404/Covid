@@ -1,0 +1,326 @@
+{% load static %}
+<html lang="en">
+
+<style type="text/css">
+body {
+  color: #5a5a5a;
+  background-color: chocolate;
+  overflow-x: hidden;
+}
+
+input {
+  width: 30%;
+}
+
+label {
+  color: white;
+  font-size: 2rem;
+  text-align: left;
+  text-shadow: 1px 1px 5px black;
+  width: 20rem;
+}
+
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+p {
+  color: #becbff;
+  font-size: 1.2rem;
+  text-align: center;
+  text-shadow: 1px 1px 5px black;
+}
+
+h1 {
+  color: white;
+  text-shadow: 3px 3px 10px black;
+}
+
+li {
+  color: #becbdd;
+  font-size: 1rem;
+}
+
+a {
+  color: white;
+}
+
+a:hover {
+  color: yellow;
+  text-decoration: none;
+}
+
+.button {
+  margin: auto;
+  max-width: 65%;
+}
+
+
+
+.hero {
+  display: block;
+  padding-bottom: 100px;
+  height:auto;
+  width: 100%;
+
+}
+
+.section-heading {
+  font-size: 3.3em;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.section-subheading {
+  color: white;
+
+  font-size: 2em;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  text-shadow: 3px 3px 10px black;
+}
+
+.section-description {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.section-divider {
+  margin: 2rem auto;
+  opacity: 0.75;
+  text-align: center;
+}
+
+
+
+.subsection-heading {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  text-shadow: 3px 3px 10px black;
+}
+
+.textfield {
+  margin: auto;
+  width: 70%;
+}
+
+#query-form {
+  margin: auto;
+  max-width: 85%;
+}
+
+/* FOOTER
+------------------------- */
+
+footer {
+   background-color: #34699a; 
+   color: white;
+  /* background-image: linear-gradient(to right top, #34699a, #113f67); */
+  padding-bottom: 4rem;
+  padding-top: 1rem;
+  text-align: center;
+  text-shadow: 2px 2px 10px black;
+}
+
+.copyright-text {
+  color: #becbff;
+}
+
+.results-div{
+  color: yellow;
+  background-color: darkred;
+}
+
+@media only screen and (max-width: 767px) {
+
+  .button {
+    max-width: 100%;
+  }
+
+  .textfield {
+    margin: auto;
+    width: 90%;
+  }
+
+}
+</style>
+
+<head>
+<link href="{% static 'css/main.css' %}" rel="stylesheet" />
+<title>Covid Web</title>
+</head>
+<body>
+
+<img src="{% static 'banner.jpg' %}" width="100%" height="350vw" alt="banner">
+
+<h1 class='section-heading'>COVID RESULT</h1>
+<h2 class='section-subheading'>SEARCH COUNTRY NAME</h2>
+
+<div class="section-description">
+
+  <p class="section-subheading">
+    <form id="query-form">
+      <div>
+        <label for="ingredients">Country :</label><input class="textfield" id="ingredients" type="text" name="ingredients" placeholder="Enter the Country Name" onChange="sanitizeInputs()" />
+      </div>
+      
+      <div class="button">
+        <br />
+        <input class="button" type="button" value="Reset" id="resetButton" onClick="this.form.reset();resetResults()" />
+        <input class="button" type="submit" value="Search ..." id="searchButton" />
+      </div>
+    </form>
+  </p>
+
+<div class="section-subheading" id="search-results-heading"></div>
+<div class="results-div" id="results"></div>
+
+</body>
+<footer>
+  <br />
+  <p><code class="copyright-text">API LINK <a href="https://disease.sh/v3/covid-19/gov/" target= "_blank">Covid19API</a></code></p>
+</footer>
+
+<!-- JQuery Scripts -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<!-- Our codes -->
+<script src="static/kitchenblue.js?v=1"></script>
+
+<script type="text/javascript"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+  // add an event listener (performSearch) to the form
+  $("#query-form").submit(function(event) { performSearch(event); });
+});
+
+
+var pat,flag=0;
+function formatSearchResults(jsonResults) {
+
+  var jsonObject = jsonResults;
+ 
+  //var siteCount = 0;
+
+  
+   
+
+    $("#search-results-heading").text("Search Results");
+    var formatedText = "";
+
+    jsonObject.Countries.forEach(
+      function(item, index) {
+
+        //console.log("hello"+data);
+        
+        if(item.Country.toLowerCase()==pat.toLowerCase()){
+        var thumbnail = item.NewConfirmed;
+       formatedText += "<div class='dish-ingredients-div'><h3>TotalConfirmed: " + item.TotalConfirmed + "<h3></div>";
+       formatedText += "<div class='dish-ingredients-div'><h3>NewDeaths: " + item.NewDeaths + "<h3></div>";
+       formatedText += "<div class='dish-ingredients-div'><h3>NewConfirmed: " + item.NewConfirmed + "<h3></div>";
+       formatedText += "<div class='dish-ingredients-div'><h3>NewRecovered: " + item.NewRecovered + "<h3></div>";
+       flag=1;
+        return;
+      }
+    }
+    );
+
+$("#results").html(formatedText);
+  if(!flag){setNotFoundMessages();}
+
+}
+
+// This functions handles sending off the search request as well as
+// error and success handling when the request calls back
+
+function performSearch(event) {
+
+  // Variable to hold request
+  var request;
+
+  // Prevent default posting of form - put here to work in case of errors
+  event.preventDefault();
+
+  // Abort any pending request
+  if (request) {
+      request.abort();
+  }
+  // setup some local variables
+  var $form = $(this);
+
+  // disable the inputs and buttons for the duration of the request.
+  setFormDisabledProps(true);
+
+  $("#search-results-heading").text("Searching ...");
+  $("#results").text("");
+
+  // Send the request
+
+  request = $.ajax({
+      url:"https://api.covid19api.com/summary",
+      type: "GET",
+     // data: { i: , q: $("#contains").val()}
+  });
+
+pat=$("#ingredients").val();
+
+  // Callback handler for success
+
+  request.done(function (response,textStatus, jqXHR){
+    formatSearchResults(response);
+    console.log(pat)
+  });
+
+  // Callback handler for failure
+
+  request.fail(function (jqXHR, textStatus, errorThrown){
+      $("#search-results-heading").text("Sorry We Unable to fetch Covid Data.Try again.");
+      $("#results").text("");
+  });
+
+  // Callback handler that will be called in any case
+
+  request.always(function () {
+      // Reenable the inputs
+      setFormDisabledProps(false);
+  });
+
+}
+
+// This function clears the search results and the heading "Search Results"
+
+function resetResults() {
+  $("#search-results-heading").text("");
+  $("#results").text("");
+  flag=0;
+}
+
+// This function checks the user input fields for any unacceptable characters
+// and removes them if found
+
+function sanitizeInputs() {
+  var str = $("#ingredients").val();
+  str = str.replace(/[^a-zA-Z 0-9,]/gim, "");
+  str = str.trim();
+  $("#ingredients").val(str);
+}
+
+// This function disables the text fields and the two buttons
+
+function setFormDisabledProps(statusToSet) {
+    document.getElementById("ingredients").disabled = statusToSet;
+    document.getElementById("resetButton").disabled = statusToSet;
+    document.getElementById("searchButton").disabled = statusToSet;
+}
+function setNotFoundMessages() {
+  $("#search-results-heading").text("Dont Fun With it.Please Enter Correct Country Name e.g-India");
+  $("#results").text("");
+}
+
+// This function sets the result heading to "no recipes found" and clear the
+// existing search results, if there are any
+</script>
+</html>

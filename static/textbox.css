@@ -1,0 +1,19 @@
+input[type=text]{
+	width: 50%;
+	marrgin:6px 0;
+	border-radius: 4px;
+	border: 2px solid #f120707;
+	padding:10px 20px;
+}
+label.binary{
+	background-color: #05f26c;
+	font-family: verdana;	
+}
+label.hexad{
+	background-color: #05f26c;
+	font-family: verdana;	
+}
+label.octa{
+	background-color: #05f26c;
+	font-family: verdana;	
+}
